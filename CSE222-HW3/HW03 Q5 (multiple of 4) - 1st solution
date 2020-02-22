@@ -1,0 +1,33 @@
+# solution 1
+# divide user's integer by 4, if there is no remainder, then the integer is divisible by 4
+
+.data
+	prompt:						.asciiz "enter an integer\n"
+	msgDivisible:			.asciiz "the number is divisible by 4\n"
+	msgNotDivisible:	.asciiz "the number is NOT divisible by 4\n"
+
+.text
+	# prompt the user to enter an integer
+	li $v0, 4
+	la $a0, prompt
+	syscall
+	
+	li $v0, 5
+	syscall
+	
+	addi $s0, $0, 4 # place value 4 into $s0
+	
+	div $v0, $s0 # perform division
+	mfhi $t0 # save the remainder to $t0
+
+	li $v0, 4
+	bnez $t0, notDivisible	
+		la $a0, msgDivisible
+		j exitApp
+	notDivisible:
+		la $a0, msgNotDivisible
+		
+	exitApp:
+	syscall
+	li $v0, 10
+	syscall

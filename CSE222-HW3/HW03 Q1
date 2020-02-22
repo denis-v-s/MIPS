@@ -1,0 +1,19 @@
+# 1) Display message “I am a college student at SCCC”
+# 2) Prompt use to enter an integer number; enter a number; save this number to var1
+
+.data
+	var1: .word 0
+	msg: .asciiz "I am a college student at SCCC\n"
+	prompt: .asciiz "Enter an integer:\n"
+
+.text
+	# print message
+	li $v0, 4
+	la $a0, msg
+	syscall
+	
+	# exit the app
+	li $v0, 10
+	syscall
+	
+

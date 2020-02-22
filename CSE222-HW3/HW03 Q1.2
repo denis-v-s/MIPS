@@ -1,0 +1,22 @@
+# Prompt user to enter an integer number; enter a number; save this number to var1
+
+.data
+	var1:	.word 0
+	msg:	.asciiz "enter a number: \n"
+	
+.text
+	# display the prompt
+	li $v0, 4
+	la $a0, msg
+	syscall
+	
+	# receive user input
+	li $v0, 5
+	syscall
+	
+	# save the entered value to var1
+	sw $v0, var1
+	
+	# exit the app
+	li $v0, 10
+	syscall

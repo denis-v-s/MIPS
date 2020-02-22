@@ -1,0 +1,65 @@
+# Input 2 integer numbers from console; check these 2 numbers and display message:
+# “both numbers are even”; “both numbers are odd”; or “one number is even and one
+# is odd”.
+
+.data
+	prompt1:	.asciiz "input the first number\n"
+	prompt2:	.asciiz "input the second number\n"
+	
+	msgEven:	.asciiz "both numbers are even\n"
+	msgOdd:	.asciiz "both numbers are odd\n"
+	msgEvenOdd:	.asciiz "one number is even and one number is odd\n"
+	
+	var1:	.word 0
+	var2:	.word 0
+	
+.text
+	# prompt the user to enter the first number
+	li $v0, 4
+	la $a0, prompt1
+	syscall
+	la $v0, 5 # get user input as integer
+	syscall
+	
+	sw $v0, var1 #save user input to var1
+	andi $t0, $v0, 0x1 # apply AND with [0000 ... 0001] # t0 will be 0 if even, 1 if odd
+	
+	# prompt the user to enter the second number
+	li $v0, 4
+	la $a0, prompt2
+	syscall
+	la $v0, 5
+	syscall
+	
+	sw $v0, var2
+	andi $t1, $v0, 0x1 # t1 will be 0 if even, 1 if odd
+	
+	# check if the sum of the two is even or odd
+	# if both are even, then $t2 = 0x0000 0000
+	# if both are odd, then $t2 = 0x0000 0002
+	# if one is even, and one is odd, then $t2 = 0x0000 0001
+	add $t2, $t0, $t1
+	
+	bne $0, $t2, else1
+		# both are even
+		li $v0, 4
+		la $a0, msgEven
+		syscall
+		j exitApp
+	else1:
+		addi $t8, $0, 2 # $t8 will hold value 2, so that I can compare it to $t2
+		bne $t8, $t2, else2
+			# both are odd
+			li $v0, 4
+			la $a0, msgOdd
+			syscall
+			j exitApp
+		else2:
+			# one is even other is odd
+			li $v0, 4
+			la $a0, msgEvenOdd
+			syscall	
+	
+	exitApp:
+		li $v0, 10
+		syscall

@@ -1,0 +1,46 @@
+# Define 2 integer variables, compare and display these 2 numbers in order that the
+# smaller number will display first
+
+.data
+	var1:	.word 10
+	var2:	.word 20
+	newline: .asciiz "\n"
+	
+.text
+	lw $t1, var1
+	lw $t2, var2
+	slt $t0, $t1, $t2 # if var1 < var2 then $t0 = 1
+	
+	beqz $t0, t2IsSmaller # if $t0 != 0, goto label
+		# show var1, var2
+		li $v0, 1
+		lw $a0, var1
+		syscall
+		# new line
+		addi $a0, $0, 0xA
+		addi $v0, $0, 0xB
+		syscall
+		#show var2
+		li $v0, 1
+		lw $a0, var2
+		syscall
+		j next
+	
+	# show var2, var1
+	t2IsSmaller:
+		# show var1, var2
+		li $v0, 1
+		lw $a0, var2
+		syscall
+		# new line
+		addi $a0, $0, 0xA
+		addi $v0, $0, 0xB
+		syscall
+		#show var2
+		li $v0, 1
+		lw $a0, var1
+		syscall
+		
+	next:
+	li $v0, 10
+	syscall

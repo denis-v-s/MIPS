@@ -18,9 +18,9 @@
 	
 	add $s0, $v0, $0 # save user's input to $s0
 	
-	# shift the number left by 30 bits
-	addi $t0, $0, 0xFFFFFFFC
-	and $t1, $t0, $v0
+	# set $t0 to 1111...1100, then apply xor, if the last two bits were 0, then $t1 will be equal to $s0
+	addi $t0, $0, 0xfffffffc
+	and $t1, $t0, $s0
 
 	li $v0, 4
 	bne $t1, $s0, notDivisible

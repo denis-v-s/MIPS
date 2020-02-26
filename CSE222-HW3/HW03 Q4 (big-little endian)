@@ -1,0 +1,27 @@
+# Write MIPS program to check if the computer is a big-endian or little-endian system
+
+.data
+	msgBig:			.asciiz "Big Endian\n"
+	msgLittle:	.asciiz "Little Endian\n"
+	
+.text
+	li $t0, 0x12345678 # dummy data that will be used to test
+	lui $t1, 0x1001 # address prefix
+	li $t2, 0x12 # will use to test for Big Endian (msb of $t0)
+	sw $t0, 0($t1)	# write dummy data in $t0 to memory
+	lb $s0, 0($t1)	# get the first byte out of the address at $t1
+	
+	bne $s0, $t2, littleEndian
+		li $v0, 4
+		la $a0, msgBig
+		syscall
+		j exitApp
+		
+	littleEndian:
+		li $v0, 4
+		la $a0, msgLittle
+		syscall
+	
+	exitApp:
+		li $v0, 10
+		syscall

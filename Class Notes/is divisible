@@ -1,0 +1,33 @@
+.data
+prompt: .asciiz "enter number: \n"
+msgDivisible: .asciiz "can divide\n"
+msgFalse: .asciiz "cannot diviby\n"
+
+.text
+
+# prompt user for first number
+la $a0, prompt
+li $v0, 4
+syscall
+
+li $v0, 5
+syscall
+
+# prompt user for second number
+la $a0, prompt
+li $v0, 4
+syscall
+
+li $v1, 5
+syscall
+
+div $v0, $v1
+beq mfhi, $0, isDivisible
+
+isDivisible:
+la $a0, msgDivisible
+syscall
+
+next:
+li $v0, 10
+syscall

@@ -1,0 +1,28 @@
+.data
+	msg: .asciiz "Enter any number (enter 0 to exit)\n"
+	msgExited: .asciiz "You entered 0, application will now exit\n"
+	
+.text
+addi $s1, $0, 0 # set breaking condition
+addi $s0, $0, 1 # set condition check to a non-zero value
+
+while: beq $s1, $s0, done
+	# user prompt
+	li $v0, 4
+	la $a0, msg
+	syscall
+	
+	# get user input
+	li $v0, 5
+	syscall
+	
+	move $s0, $v0
+	j while
+	
+done:
+	li $v0, 4
+	la $a0, msgExited
+	syscall
+	
+	li $v0, 10
+	syscall

@@ -1,0 +1,30 @@
+.data
+var1: .word 10
+var2: .word 20
+msg3: .asciiz "v1 is greater than v2\n"
+msg4: .asciiz "v2 is greater than v1\n"
+
+.text
+main:
+	lw $t0, var1
+	lw $t1, var2
+	
+	# compare t0 and t1, if t0 is less than t1, then set t2 = 1, or if greater then t2 = 0
+	slt $t2, $t0, $t1
+	beq $t2, $0, label3
+	
+	la $a0, msg4
+	j next
+	
+label3: la $a0, msg4
+
+next:
+	# 1-4 output, 5-8 input
+	# 1 print integer, 2 print float, 4 print string, 5 read int, 8 read string
+	li $v0, 4
+	syscall
+
+	
+	# 10 means terminate
+	li $v0, 10
+	syscall

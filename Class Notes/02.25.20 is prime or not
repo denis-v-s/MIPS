@@ -1,0 +1,40 @@
+.data
+msg1: .asciiz " is prime\n"
+msg2: .asciiz " is not a prime\n"
+
+.text
+	li $v0, 42 # generate a random number
+	li $a1, 100 # set a bound of 100 (ie: random in range: 0 - 99)
+	syscall
+	
+	#move $a0, $a1
+	li $v0, 1
+	syscall
+	
+	sra $t0, $a0, 1
+	li $t1, 2
+	
+do:
+	div $a0, $t1
+	mfhi $t2
+	beq $t2, $0, np
+	
+	addi $t1, $t1, 1
+	beq $t1, $t0, prime
+	j do
+	
+np:
+	la $a0, msg2
+	li $v0, 4
+	syscall
+	j exit
+	
+prime:
+	la $a0, msg1
+	li $v0, 4
+	syscall
+	j exit
+	
+exit:
+	li $v0, 10
+	syscall

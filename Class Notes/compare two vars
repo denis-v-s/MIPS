@@ -1,0 +1,28 @@
+.data
+var1: .word 10
+var2: .word 20
+msg1: .asciiz "same\n"
+msg2: .asciiz "not same\n"
+
+.text
+main:
+	lw $t0, var1
+	lw $t1, var2
+	
+	
+	beq $t0, $t1, different
+	la $a0, msg2
+	j next
+	
+different: 
+	la $a0, msg1
+
+next: 
+	# 1 print integer, 2 print float, 4 print string
+	li $v0, 4
+	syscall
+
+	
+	# 10 means terminate
+	li $v0, 10
+	syscall

@@ -1,0 +1,50 @@
+.data
+
+arr1:	.space 100 # allocate 100 bytes of memory
+size:	.word 25
+emptySpace:	.asciiz " "
+
+.text
+main:
+	li $t0, 0 # starting value ( like i in a loop)
+	lw $t1, size # store the number of 4 byte chunks in $t1
+	la $a2, arr1 # memory address of arr1
+	la $s0, arr1 # another copy of address (for reading data later on)
+	
+	li $t2, 1 # the value that we will be populating the array with
+	
+loop:
+	# get a random number
+	li $v0, 42
+	li $a1, 50 # upper bound of the random number (0-49)
+	syscall
+	
+	sw $a0, 0($a2) # save the random number of the array
+	addi $t0, $t0, 1 # increase index $t0 by 1
+	beq $t0, $t1, done
+	addi $a2, $a2, 4 # shift base address by 4 bytes
+	j loop
+done:
+
+# display values in the array that was generated above
+li $t0, 0 # reset the index to 0
+
+loop2:
+	lw $t3, 0($s0) # get the value at the address and place it into $t3
+	# display the number
+	li $v0, 1
+	move $a0, $t3
+	syscall
+	
+	li $v0, 4
+	la $a0, emptySpace
+	syscall
+	
+	addi $t0, $t0, 1 # increment index by 1
+	beq $t0, $t1, done2
+	addi $s0, $s0, 4
+	j loop2
+done2:
+
+	li $v0, 10
+	syscall

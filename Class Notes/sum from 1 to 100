@@ -1,0 +1,20 @@
+.data
+
+.text
+	addi $s0, $0, 1 # initialize $s0 to 1
+	addi $s1, $0, 11 # initialize $s1 to 10
+	
+while: beq $s0, $s1, done
+	add $s2, $s2, $s0 # track the sum 
+	addi $s0, $s0, 1 # increment by 1
+	j while
+done:
+	move $a0, $s2 # set $a0 argument
+	li $v0, 1
+	#la $a0, $s2
+	syscall
+		
+	# exit app
+	li $v0, 10
+	syscall
+		

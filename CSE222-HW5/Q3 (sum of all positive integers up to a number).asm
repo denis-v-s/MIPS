@@ -49,6 +49,11 @@ prompt:
 	# @params: $a0 - integer that will be tested
 	# @return: $v0 will be set to 1 if positive, 0 if negative
 	isPositive:
+		# save the registers
+		addi $sp, $sp, -8
+		sw $a0, 0($sp)
+		sw $a1, 4($sp)
+		
 		# if the number is 0, then return 0
 		li $v0, 0
 		beqz $a0, isPositiveExit
@@ -58,7 +63,13 @@ prompt:
 		sll $a1, $a1, 1
 		srl $a1, $a1, 1
 		seq $v0, $a1, $a0 # set $v0 to 1 if $a1 is equal to $a0
+
 		isPositiveExit:
+		# restore registers
+		lw $a0, 0($sp)
+		lw $a1, 4($sp)
+		addi $sp, $sp, -8
+		
 		jr $ra # go back to main program
 	
 	# ==========================================
@@ -67,6 +78,10 @@ prompt:
 	# @params: $a0 - integer that will be the threshold for sum calculation
 	# @return: $v0 - will be set to the sum
 	sigmaSum:
+		addi $sp, $sp, -8
+		sw $a0, 0($sp)
+		sw $a1, 4($sp)
+		
 		li $a1, 1 # sum calculation starts with 1
 		li $v0, 1
 		
@@ -77,4 +92,9 @@ prompt:
 			j sigmaLoop
 			
 		sigmaLoopEnd:
+		# restore registers
+		lw $a0, 0($sp)
+		lw $a1, 4($sp)
+		addi $sp, $sp, -8
+		
 		jr $ra # go back to main program

@@ -42,18 +42,18 @@
 	# @params: $a0 - integer that will be tested
 	# @return: $v0 - the number of ones (1)
 	countOnes:
+		# back up registers onto the stack
+		addi $sp, $sp, -16
+		sw $t0, 12($sp)
+		sw $t1, 8($sp)
+		sw $a1, 4($sp)
+		sw $a0, 0($sp)
+			
 		li $a1, 32 # number of loop iterations. There's a total of 32 bits
 		li $v0, 0
 		li $t0, 0x1
 		
 		countOnesLoop:
-			# back up registers onto the stack
-			addi $sp, $sp, -16
-			sw $t0, 12($sp)
-			sw $t1, 8($sp)
-			sw $a1, 4($sp)
-			sw $a0, 0($sp)
-			
 			beq $a1, $0, countOnesLoopEnd # break the loop if we reached 0
 			subi $a1, $a1, 1 # reduce the iterations by 1
 			

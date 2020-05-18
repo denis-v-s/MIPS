@@ -1,32 +1,43 @@
 # perform the conversion of 32-bit sign/magnitude binary to 2's complement numbers
+# test cases
+# (5) "0000 0000 0000 0000 0000 0000 0000 0101" to "0000 0000 0000 0000 0000 0000 0000 0101"
+# (5) "00000000000000000000000000000101" to "0000 0000 0000 0000 0000 0000 0000 0101"
+# (5) "101" to "0000 0000 0000 0000 0000 0000 0000 0101"
+
+# (0) "0000 0000 0000 0000 0000 0000 0000 0000" to "0000 0000 0000 0000 0000 0000 0000 0000"
+# (-0) "1000 0000 0000 0000 0000 0000 0000 0000" to "0000 0000 0000 0000 0000 0000 0000 0000"
+# (-1) "1000 0000 0000 0000 0000 0000 0000 0001" to "1111 1111 1111 1111 1111 1111 1111 1111"
+
+# (-5) "1000 0000 0000 0000 0000 0000 0000 0101" to "1111 1111 1111 1111 1111 1111 1111 1101"
+# (-5) "10000000000000000000000000000101" to "1111 1111 1111 1111 1111 1111 1111 1101"
 .data
 	emptyspace:	.asciiz " "
 	linebreak:	.asciiz "\n"
-	prompt: .asciiz "enter a 32 bit binary number (32 zeros and ones with no spaces: 0000 0000 0000 0000 0000 0000 0000 0000)\n"
-	testinput: .asciiz "1000 0000 0000 0000 0000 0000 0000 0101"
+	prompt: .asciiz "enter a 32 bit binary number (spaces are ok, 0000 0000 0000 0000 0000 0000 0000 0000)\n"
 	one: .asciiz "1"
 	zero: .asciiz "0"
+	buffer: .space 40 # 40 bits
 	
 	msgConverted: .asciiz " sign/magniture, converted to two's complement is: "
 .text
 	# display prompt message to the user
-#	la $a0, prompt
-#	li $v0, 4
-#	syscall
+	la $a0, prompt
+	li $v0, 4
+	syscall
 	
 	# get the user's entry (string)
-#	li $a1, 32 # maximum of 32 characters
-#	li $v0, 8
-#	syscall
+	li $v0, 8
+	la $a0, buffer
+	li $a1, 40 # max of 39 characters
+	syscall
 	
-#	move $s0, $v0 # save the user's entry to register $s0
-	la $t0, 0x00000000
+	move $t0, $a0 # save the user's entry to register $t0
 	la $s0, 0x00000000
-	la $t0, testinput
 	la $t8, 0x80000000
 	
 	# -----------------------------
 	# convert the input into binary
+	# move through $t0, by loading current bit into $t2 on each loop pass
 	loop:
 		lb $t2, 0($t0) # load byte into register $t2
 		bne $t2, 0x31, next #0x31 = ascii 1
@@ -35,7 +46,8 @@
 		next:
 		addi $t0, $t0, 1 # move next
 		lb $t2, 0($t0) # check the next byte
-		beq $t2, $0, done
+		beq $t2, $0, done # if the value is \0 then we are done
+		beq $t2, 0xa, done # if the value is 0xa then we are done (the user terminated input with enter key)
 		
 		# shift left (if the character is not a "space")
 		beq $t2, 0x20, loop
@@ -44,11 +56,7 @@
 	done:
 	
 	# -------------------------------
-	# display: x converted to two's complement is: 
-	la $a0, testinput
-	li $v0, 4
-	syscall
-		
+	# display: x converted to two's complement is: 		
 	la $a0, msgConverted
 	li $v0, 4
 	syscall
@@ -80,7 +88,7 @@
 		#syscall
 		
 		move $a1, $s0
-		jal displayHexAsBinary
+		jal displayHexAsBinary # accepts $a1 as parameter
 #		la $a0, ($s0)
 #		li $v0, 1
 #		syscall
@@ -99,7 +107,7 @@ displayHexAsBinary:
 	sw, $t1, 4($sp)
 	sw, $t2, 8($sp)
 	sw, $t3, 12($sp)
-	sw, $t3, 16($sp)
+	sw, $t4, 16($sp)
 	
 	li $t1, 0x80000000 # will be used for AND opration
 	li $t2, 0 # loop index variable
